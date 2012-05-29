@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# TODO don't run if .guard-jruby-rspec doesn't exist
+# instead, warn that guard must be (re)started
+
+touch .guard-jruby-rspec-pipe
+rm .guard-jruby-rspec
+
+# todo: also put the cmd args in here 
+echo $$ > .guard-jruby-rspec
+
+tail -f .guard-jruby-rspec-pipe

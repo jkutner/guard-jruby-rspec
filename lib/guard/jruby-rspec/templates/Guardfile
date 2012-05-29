@@ -1,0 +1,2 @@
+guard 'jruby-rspec', :spec_paths => ["spec"]
+
