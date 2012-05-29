@@ -2,7 +2,7 @@
 
 This guard extention allows you to run all of your specs on JRuby without the initial start up cost.  *It does not run a subset of your specs like guard-rspec* and it does not trigger a run when a file changes.
 
-Instead, this extension loads all of your application files in advance, and reloads any that change.  That way, when you run RSpec, the JVM is already running, and your file have already been required.
+Instead, this extension loads all of your application files in advance, and reloads any that change.  That way, when you run RSpec, the JVM is already running, and your files have already been required.
 
 ## How to Use
 
