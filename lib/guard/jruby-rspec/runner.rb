@@ -1,10 +1,9 @@
 require 'rspec'
 require 'guard/jruby-rspec/formatters/notification_rspec'
-#require 'guard/rspec/runner'
 
 module Guard
   class JRubyRSpec
-    class Runner #< ::Guard::RSpec::Runner
+    class Runner
      
       def initialize(options = {})
         @options = {
