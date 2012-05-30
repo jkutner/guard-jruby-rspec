@@ -31,6 +31,8 @@ Once you change some files, and press return at the guard prompt to rerun your s
 
 ## How to Use Autorun mode
 
+Add something like this to your guard file (alternatives are in the template file):
+
     interactor :simple
     guard 'jruby-rspec' do        
       watch(%r{^spec/.+_spec\.rb$})
