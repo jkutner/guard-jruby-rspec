@@ -1,3 +1,6 @@
+# This eliminates the stty warning.
+interactor :simple
+
 guard 'jruby-rspec', :spec_paths => ["spec"] do
   # You can leave this empty and jruby-rspec will not autorun,
   # but it will run all specs in :spec_paths on demand
