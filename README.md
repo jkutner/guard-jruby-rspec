@@ -1,13 +1,14 @@
 # guard-jruby-rspec
 
-This guard extention allows you to run all of your specs on JRuby without the initial start up cost.  *It does not run a subset of your specs like guard-rspec* and it does not trigger a run when a file changes.
+This guard extention allows you to run all of your specs on JRuby without the initial start up cost.  It loads all of your application files in advance, and reloads any that change.  That way, when you run RSpec, the JVM is already running, and your files have already been required.
 
-Instead, this extension loads all of your application files in advance, and reloads any that change.  That way, when you run RSpec, the JVM is already running, and your files have already been required.
+Most of the config options available to `guard-rspec` work with this extension too.  Notably missing (but coming soon) is `:cli`.
 
-## How to Use
+## How to Use On-Demand mode
 
 Just add this to your guard file:
 
+    interactor :simple
     guard 'jruby-rspec', :spec_paths => ["spec"]
 
 Then run `guard` like this (probably with Bundler):
@@ -28,11 +29,16 @@ The first time guard starts up, it will run all of your specs in order to bootst
 
 Once you change some files, and press return at the guard prompt to rerun your specs. You'll notice it's a lot faster than running `rspec` from the command line. 
 
-NOTE: sometime you have to hit return twice because stdin is flaky on JRuby. You probably see this message a lot, but it's okay:
+## How to Use Autorun mode
 
-    stty: stdin isn't a terminal
+    interactor :simple
+    guard 'jruby-rspec' do        
+      watch(%r{^spec/.+_spec\.rb$})
+      watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
+      watch('spec/spec_helper.rb')  { "spec" }
+    end
 
-This will be improved.
+Proceed as in on-demand mode.
 
 ## TODO
 
@@ -43,6 +49,10 @@ This will be improved.
 +  Fix the way guard uses stdin so its not flaky on JRuby
 
 +  Work out the kinks in gj-rspec script so that specs can be run in main terminal.
+
+## Thank You
+
+Thank you to the authors of `guard-rspec`.  I'm piggybacking off of the hard work done by [Thibaud Guillaume-Gentil](https://github.com/thibaudgg) and others!
 
 ## Author
 
