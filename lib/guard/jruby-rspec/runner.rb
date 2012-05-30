@@ -16,24 +16,23 @@ module Guard
 
       def run(paths, options = {})
         # it might be a problem to run Rspec within this runtime.  Might have to create an
-        # auxillary java process and run it over there.  That would just make this one a
-        # controller for the other one. 
+        # embedded jruby.  
         if File.exists?(@pipefile)
-
+          raise "not supported yet"
           # instead of writing to the pipefile, we should probably use a 
           # formatter and write to /dev/null
-          orig_stdout = $stdout.clone
-          orig_stderr = $stderr.clone
-          begin
-            $stdout.reopen(@pipefile, "w")
-            $stderr.reopen(@pipefile, "w")
-            RSpec::Core::Runner.run(paths)
-          ensure
-            $stdout.reopen(orig_stdout)
-            $stderr.reopen(orig_stderr)
-          end
+          # orig_stdout = $stdout.clone
+          # orig_stderr = $stderr.clone
+          # begin
+          #   $stdout.reopen(@pipefile, "w")
+          #   $stderr.reopen(@pipefile, "w")
+          #   ::RSpec::Core::Runner.run(paths)
+          # ensure
+          #   $stdout.reopen(orig_stdout)
+          #   $stderr.reopen(orig_stderr)
+          # end
         else
-          RSpec::Core::Runner.run(paths)
+          ::RSpec::Core::Runner.run(paths)
         end
       end
 

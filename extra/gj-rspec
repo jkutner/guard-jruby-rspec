@@ -9,4 +9,5 @@ rm .guard-jruby-rspec
 # todo: also put the cmd args in here 
 echo $$ > .guard-jruby-rspec
 
-tail -f .guard-jruby-rspec-pipe
+#tail -n +0 -f .guard-jruby-rspec-pipe | { sed "/EOF/ q" && kill $$ ;}
+tail -F .guard-jruby-rspec-pipe

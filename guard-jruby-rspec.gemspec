@@ -16,6 +16,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = 'guard-jruby-rspec'
 
   s.add_dependency 'guard', '>= 0.10.0'
+  s.add_dependency 'guard-rspec', '>= 0.7.3'
 
   s.add_development_dependency 'rspec',   '~> 2.7'
 
