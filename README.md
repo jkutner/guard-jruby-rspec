@@ -42,6 +42,15 @@ Add something like this to your guard file (alternatives are in the template fil
 
 Proceed as in on-demand mode.
 
+# Using CLI Options
+
+The format that `guard-jruby-rspec` expects CLI options to be in is a little different than what `guard-rspec` exepcts.  Here is an example:
+
+    interactor :simple
+    guard "jruby-rspec", :cli => ["-c", "-t~slow"]
+
+The CLI options should be an Array containing a number of strings.  Each string should be a flag and an option value with no space between the flag and the value.
+
 ## TODO
 
 +  Autorun specs like guard-rspec (want to integrate with guard-rspec so as to not duplicate all of it's logic).
