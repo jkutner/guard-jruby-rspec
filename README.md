@@ -42,7 +42,7 @@ Add something like this to your guard file (alternatives are in the template fil
 
 Proceed as in on-demand mode.
 
-# Using CLI Options
+## Using CLI Options
 
 The format that `guard-jruby-rspec` expects CLI options to be in is a little different than what `guard-rspec` exepcts.  Here is an example:
 
