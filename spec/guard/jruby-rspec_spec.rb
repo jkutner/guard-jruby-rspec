@@ -179,6 +179,15 @@ describe Guard::JRubyRSpec do
 
       expect { subject.run_on_change(['spec/foo']) }.to throw_symbol :task_has_failed
     end
+
+    it "works with watchers that don't have an action" do
+      subject = described_class.new([Guard::Watcher.new(%r{^spec/(.+)$})])
+
+      inspector.should_receive(:clean).with(anything).and_return(['spec/quack_spec'])
+      runner.should_receive(:run).with(['spec/quack_spec']) { true }
+
+      subject.run_on_change(['spec/quack_spec']) 
+    end
   end
 end
 
