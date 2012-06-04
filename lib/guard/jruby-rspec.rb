@@ -58,7 +58,7 @@ module Guard
         raw_paths.each do |p|
           @custom_watchers.each do |w|
             if (m = w.match(p))
-              paths << (w.action.nil? ? p : c.call_action(m))
+              paths << (w.action.nil? ? p : w.call_action(m))
             end
           end
         end
