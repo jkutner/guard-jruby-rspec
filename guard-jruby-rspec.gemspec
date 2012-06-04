@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = ['jpkutner@gmail.com']
   s.homepage    = 'http://rubygems.org/gems/guard-jruby-rspec'
   s.summary     = 'Guard gem for JRuby RSpec'
-  s.description = 'Guard::JRuby::RSpec keeps a warmed up JVM ready to run your specs.'
+  s.description = 'Guard::JRubyRSpec keeps a warmed up JVM ready to run your specs.'
 
   s.required_rubygems_version = '>= 1.3.6'
   s.rubyforge_project         = 'guard-jruby-rspec'
