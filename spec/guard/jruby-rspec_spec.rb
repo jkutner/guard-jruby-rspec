@@ -9,7 +9,7 @@ describe Guard::JRubyRSpec do
   end
 
   let(:custom_watchers) do 
-    [Guard::Watcher.new(%r{^spec/(.+)$}) { |m| "spec/#{m[1]}_match"}]
+    [Guard::Watcher.new(%r{^spec/(.+)$}, lambda { |m| "spec/#{m[1]}_match"})]
   end
 
   subject { described_class.new custom_watchers, default_options}
@@ -155,20 +155,17 @@ describe Guard::JRubyRSpec do
     it 'keeps failed spec and rerun them later' do
       subject = described_class.new(custom_watchers, :all_after_pass => false)
 
-      # TODO passing 'anything' to inspector means we aren't really testing the
-      # customer watcher logic
-
-      inspector.should_receive(:clean).with(anything).and_return(['spec/bar_match'])
+      inspector.should_receive(:clean).with(['spec/bar_match']).and_return(['spec/bar_match'])
       runner.should_receive(:run).with(['spec/bar_match']) { false }
 
       expect { subject.run_on_change(['spec/bar']) }.to throw_symbol :task_has_failed
 
-      inspector.should_receive(:clean).with(anything).and_return(['spec/foo_match', 'spec/bar_match'])
+      inspector.should_receive(:clean).with(['spec/foo_match', 'spec/bar_match']).and_return(['spec/foo_match', 'spec/bar_match'])
       runner.should_receive(:run).with(['spec/foo_match', 'spec/bar_match']) { true }
 
       subject.run_on_change(['spec/foo'])
 
-      inspector.should_receive(:clean).with(anything).and_return(['spec/foo_match'])
+      inspector.should_receive(:clean).with(['spec/foo_match']).and_return(['spec/foo_match'])
       runner.should_receive(:run).with(['spec/foo_match']) { true }
 
       subject.run_on_change(['spec/foo'])
@@ -187,6 +184,18 @@ describe Guard::JRubyRSpec do
       runner.should_receive(:run).with(['spec/quack_spec']) { true }
 
       subject.run_on_change(['spec/quack_spec']) 
+    end
+
+    it "works with watchers that do have an action" do
+      watcher_with_action = mock(Guard::Watcher, :match => :matches, :action => true)
+      watcher_with_action.should_receive(:call_action).with(:matches).and_return('spec/foo_match')
+
+      subject = described_class.new([watcher_with_action])
+
+      inspector.should_receive(:clean).with(['spec/foo_match']).and_return(['spec/foo_match'])
+      runner.should_receive(:run).with(['spec/foo_match']) { true }
+
+      subject.run_on_change(['spec/foo'])
     end
   end
 end
