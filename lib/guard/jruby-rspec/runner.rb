@@ -43,7 +43,11 @@ module Guard
           #   $stderr.reopen(orig_stderr)
           # end
         else
-          ::RSpec::Core::Runner.run(rspec_arguments(paths, @options))
+          begin
+            ::RSpec::Core::Runner.run(rspec_arguments(paths, @options))
+          rescue SyntaxError => e
+            UI.error e.message
+          end
         end
       end
 
