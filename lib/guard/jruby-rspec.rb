@@ -67,24 +67,31 @@ module Guard
     end
 
     def reload_paths(paths)
-      paths.each do |p| 
-        if File.exists?(p) 
-          if p == @options[:monitor_file]
-            # begin
-            #   pidfile = open(@options[:monitor_file], "r+")
-            #   pid = pidfile.read
+      # Silence warnings to avoid a slew of "already initialized constants"
+      orig_verbosity, $VERBOSE = $VERBOSE, nil
 
-            #   run_all
+      begin
+        paths.each do |p|
+          if File.exists?(p)
+            if p == @options[:monitor_file]
+              # begin
+              #   pidfile = open(@options[:monitor_file], "r+")
+              #   pid = pidfile.read
 
-            #   system("kill #{pid}") if (pid and !pid.empty?)
-            # ensure
-            #   @runner.cleanup
-            # end
-          else
-            # reload the file
-            load p 
+              #   run_all
+
+              #   system("kill #{pid}") if (pid and !pid.empty?)
+              # ensure
+              #   @runner.cleanup
+              # end
+            else
+              # reload the file
+              load p
+            end
           end
         end
+      ensure
+        $VERBOSE = orig_verbosity
       end
     end
 
