@@ -49,7 +49,7 @@ module Guard
       run_all if @options[:all_on_start]
     end
 
-    def run_on_change(raw_paths)
+    def run_on_changes(raw_paths)
       reload_paths(raw_paths)
 
       unless @custom_watchers.nil? or @custom_watchers.empty?
@@ -65,6 +65,8 @@ module Guard
         super(paths)
       end
     end
+    # Guard 1.1 renamed run_on_change to run_on_changes
+    alias_method :run_on_change, :run_on_changes
 
     def reload_paths(paths)
       paths.each do |p| 
