@@ -105,6 +105,31 @@ describe Guard::JRubyRSpec do
     it_should_behave_like 'clear failed paths'
   end
 
+  describe '#reload_paths' do
+
+    it 'should reload files other than spec files' do
+      lib_file = 'lib/myapp/greeter.rb'
+      spec_file = 'specs/myapp/greeter_spec.rb'
+      File.stub(:exists?).and_return(true)
+      subject.stub(:load)
+      subject.should_receive(:load).with(lib_file)
+      subject.should_not_receive(:load).with(spec_file)
+
+      subject.reload_paths([lib_file, spec_file])
+    end
+
+    it 'should use @options to alter spec file suffix' do
+      subject = described_class.new([], :spec_file_suffix => '_test.rb')
+      test_file = 'specs/myapp/greeter_test.rb'
+      File.stub(:exists?).and_return(true)
+      subject.stub(:load)
+      subject.should_not_receive(:load).with(test_file)
+
+      subject.reload_paths([test_file])
+    end
+
+  end
+
   describe '#run_on_change' do
     before { inspector.stub(:clean => ['spec/foo_match']) }
 
