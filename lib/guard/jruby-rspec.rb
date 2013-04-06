@@ -9,12 +9,13 @@ module Guard
 
     def initialize(watchers = [], options = {})
       @options = {
-        :all_after_pass => true,
-        :all_on_start   => true,
-        :keep_failed    => true,
-        :spec_paths     => ["spec"],
-        :run_all        => {},
-        :monitor_file   => ".guard-jruby-rspec"
+        :all_after_pass   => true,
+        :all_on_start     => true,
+        :keep_failed      => true,
+        :spec_paths       => ["spec"],        
+        :spec_file_suffix => "_spec.rb",
+        :run_all          => {},
+        :monitor_file     => ".guard-jruby-rspec"
       }.merge(options)
       @last_failed  = false
       @failed_paths = []
@@ -69,7 +70,7 @@ module Guard
     alias_method :run_on_change, :run_on_changes
 
     def reload_paths(paths)
-      paths.each do |p| 
+      paths.reject {|p| p.end_with?(@options[:spec_file_suffix])}.each do |p| 
         if File.exists?(p) 
           if p == @options[:monitor_file]
             # begin
