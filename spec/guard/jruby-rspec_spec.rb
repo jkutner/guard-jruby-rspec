@@ -3,8 +3,9 @@ require 'spec_helper'
 describe Guard::JRubyRSpec do
   let(:default_options) do
     {
-      :all_after_pass => true, :all_on_start => true, :keep_failed => true,
-      :spec_paths => ['spec'], :run_all => {}, :monitor_file=>".guard-jruby-rspec"
+      :focus_on_failed=>false, :all_after_pass=>true, :all_on_start=>true, 
+      :keep_failed=>true, :spec_paths=>["spec"], :run_all=>{}, :spec_file_suffix=>"_spec.rb", 
+      :monitor_file=>".guard-jruby-rspec"
     }
   end
 
@@ -14,7 +15,7 @@ describe Guard::JRubyRSpec do
 
   subject { described_class.new custom_watchers, default_options}
 
-  let(:inspector) { mock(described_class::Inspector, :excluded= => nil, :spec_paths= => nil, :clean => []) }
+  let(:inspector) { mock(described_class::Inspector, :excluded= => nil, :spec_paths= => ['spec'], :clean => []) }
   let(:runner)    { mock(described_class::Runner, :set_rspec_version => nil, :rspec_version => nil) }
 
   before do
@@ -70,7 +71,7 @@ describe Guard::JRubyRSpec do
   describe '#run_all' do
     it "runs all specs specified by the default 'spec_paths' option" do
       runner.should_receive(:run).with(['spec'], anything) { true }
-
+      inspector.should_receive(:spec_paths).with(no_args)
       subject.run_all
     end
 
