@@ -8,14 +8,16 @@ module Guard
     autoload :Inspector,    'guard/jruby-rspec/inspector'
 
     def initialize(watchers = [], options = {})
+      super
       @options = {
-        :all_after_pass   => true,
-        :all_on_start     => true,
-        :keep_failed      => true,
-        :spec_paths       => ["spec"],        
-        :spec_file_suffix => "_spec.rb",
-        :run_all          => {},
-        :monitor_file     => ".guard-jruby-rspec"
+          :focus_on_failed => false,
+          :all_after_pass => true,
+          :all_on_start   => true,
+          :keep_failed    => true,
+          :spec_paths     => ["spec"],
+          :run_all        => {},
+          :spec_file_suffix => "_spec.rb",
+          :monitor_file     => ".guard-jruby-rspec"
       }.merge(options)
       @last_failed  = false
       @failed_paths = []

@@ -4,7 +4,7 @@ describe Guard::JRubyRSpec do
   let(:default_options) do
     {
       :focus_on_failed=>false, :all_after_pass=>true, :all_on_start=>true, 
-      :keep_failed=>true, :spec_paths=>["spec"], :run_all=>{}, :spec_file_suffix=>"_spec.rb", 
+      :keep_failed=>true, :spec_paths=>["spec"], :run_all=>{}, :spec_file_suffix=>"_spec.rb",
       :monitor_file=>".guard-jruby-rspec"
     }
   end
@@ -30,10 +30,11 @@ describe Guard::JRubyRSpec do
       runner.should_receive(:run).with(['spec/foo_match']) { false }
       expect { subject.run_on_change(['spec/foo']) }.to throw_symbol :task_has_failed
 
-      runner.should_receive(:run) { true }
+      runner.should_receive(:run).with(['spec/bar_match'], anything) { true }
       expect { subject.run_all }.to_not throw_symbol # this actually clears the failed paths
 
       runner.should_receive(:run).with(['spec/bar_match']) { true }
+      inspector.should_receive(:spec_paths).with(no_args) { ['spec/bar_match'] }
       subject.run_on_change(['spec/bar'])
     end
   end
@@ -71,13 +72,14 @@ describe Guard::JRubyRSpec do
   describe '#run_all' do
     it "runs all specs specified by the default 'spec_paths' option" do
       runner.should_receive(:run).with(['spec'], anything) { true }
-      inspector.should_receive(:spec_paths).with(no_args)
+      inspector.should_receive(:spec_paths).with(no_args) { ['spec'] }
       subject.run_all
     end
 
     it "should run all specs specified by the 'spec_paths' option" do
       subject = described_class.new([], :spec_paths => ['spec', 'spec/fixtures/other_spec_path'])
       runner.should_receive(:run).with(['spec', 'spec/fixtures/other_spec_path'], anything) { true }
+      inspector.should_receive(:spec_paths).with(no_args) { ['spec', 'spec/fixtures/other_spec_path'] }
 
       subject.run_all
     end
@@ -87,18 +89,21 @@ describe Guard::JRubyRSpec do
         :rvm => ['1.8.7', '1.9.2'], :cli => '--color', :run_all => { :cli => '--format progress' }
       })
       runner.should_receive(:run).with(['spec'], hash_including(:cli => '--format progress')) { true }
+      inspector.should_receive(:spec_paths).with(no_args) { ['spec'] }
 
       subject.run_all
     end
 
     it 'passes the message to the runner' do
       runner.should_receive(:run).with(['spec'], hash_including(:message => 'Running all specs')) { true }
+      inspector.should_receive(:spec_paths).with(no_args) { ['spec'] }
 
       subject.run_all
     end
 
     it "throws task_has_failed if specs don't passed" do
-      runner.should_receive(:run) { false }
+      runner.should_receive(:run).with(['spec'], anything) { false }
+      inspector.should_receive(:spec_paths).with(no_args) { ['spec'] }
 
       expect { subject.run_all }.to throw_symbol :task_has_failed
     end
