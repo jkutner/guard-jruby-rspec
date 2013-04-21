@@ -4,7 +4,7 @@ require 'guard/jruby-rspec/formatters/notification_rspec'
 module Guard
   class JRubyRSpec
     class Runner
-     
+
       def initialize(options = {})
         @options = {
           :cli          => [],
@@ -27,10 +27,10 @@ module Guard
         UI.info(message, :reset => true)
 
         # it might be a problem to run Rspec within this runtime.  Might have to create an
-        # embedded jruby.  
+        # embedded jruby.
         if File.exists?(@pipefile)
           raise "not supported yet"
-          # instead of writing to the pipefile, we should probably use a 
+          # instead of writing to the pipefile, we should probably use a
           # formatter and write to /dev/null
           # orig_stdout = $stdout.clone
           # orig_stderr = $stderr.clone
@@ -43,10 +43,13 @@ module Guard
           #   $stderr.reopen(orig_stderr)
           # end
         else
+          orig_configuration = ::RSpec.configuration
           begin
             ::RSpec::Core::Runner.run(rspec_arguments(paths, @options))
           rescue SyntaxError => e
             UI.error e.message
+          ensure
+            ::RSpec.instance_variable_set(:@configuration, orig_configuration)
           end
         end
       end
