@@ -3,18 +3,24 @@ require 'spec_helper'
 describe Guard::JRubyRSpec do
   let(:default_options) do
     {
-      :all_after_pass => true, :all_on_start => true, :keep_failed => true,
-      :spec_paths => ['spec'], :run_all => {}, :monitor_file=>".guard-jruby-rspec"
+      :focus_on_failed => false,
+      :all_after_pass => true,
+      :all_on_start => true,
+      :keep_failed => true,
+      :spec_paths => ['spec'],
+      :spec_file_suffix => "_spec.rb",
+      :run_all => {},
+      :monitor_file=> ".guard-jruby-rspec"
     }
   end
 
-  let(:custom_watchers) do 
+  let(:custom_watchers) do
     [Guard::Watcher.new(%r{^spec/(.+)$}, lambda { |m| "spec/#{m[1]}_match"})]
   end
 
   subject { described_class.new custom_watchers, default_options}
 
-  let(:inspector) { mock(described_class::Inspector, :excluded= => nil, :spec_paths= => nil, :clean => []) }
+  let(:inspector) { mock(described_class::Inspector, :excluded= => nil, :spec_paths= => nil, :spec_paths => [], :clean => []) }
   let(:runner)    { mock(described_class::Runner, :set_rspec_version => nil, :rspec_version => nil) }
 
   before do
@@ -68,14 +74,10 @@ describe Guard::JRubyRSpec do
   end
 
   describe '#run_all' do
+    before { inspector.stub(:spec_paths => ['spec']) }
+
     it "runs all specs specified by the default 'spec_paths' option" do
-      runner.should_receive(:run).with(['spec'], anything) { true }
-
-      subject.run_all
-    end
-
-    it "should run all specs specified by the 'spec_paths' option" do
-      subject = described_class.new([], :spec_paths => ['spec', 'spec/fixtures/other_spec_path'])
+      inspector.stub(:spec_paths => ['spec', 'spec/fixtures/other_spec_path'])
       runner.should_receive(:run).with(['spec', 'spec/fixtures/other_spec_path'], anything) { true }
 
       subject.run_all
@@ -208,7 +210,7 @@ describe Guard::JRubyRSpec do
       inspector.should_receive(:clean).with(anything).and_return(['spec/quack_spec'])
       runner.should_receive(:run).with(['spec/quack_spec']) { true }
 
-      subject.run_on_change(['spec/quack_spec']) 
+      subject.run_on_change(['spec/quack_spec'])
     end
 
     it "works with watchers that do have an action" do
