@@ -11,6 +11,14 @@ describe Guard::JRubyRSpec::Runner do
       Guard::JRubyRSpec::Runner::UI.stub(:info)
     end
 
+    it 'keeps the RSpec global configuration between runs' do
+      RSpec::Core::Runner.stub(:run)
+      orig_configuration = ::RSpec.configuration
+      ::RSpec.should_receive(:instance_variable_set).with(:@configuration, orig_configuration)
+
+      subject.run(['spec/foo'])
+    end
+
     context 'when passed an empty paths list' do
       it 'returns false' do
         subject.run([]).should be_false
@@ -24,6 +32,5 @@ describe Guard::JRubyRSpec::Runner do
         subject.run(['spec/foo'])
       end
     end
-
   end
 end
