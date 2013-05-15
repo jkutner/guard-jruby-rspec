@@ -26,6 +26,7 @@ describe Guard::JRubyRSpec do
   before do
     described_class::Runner.stub(:new => runner)
     described_class::Inspector.stub(:new => inspector)
+    Guard::UI.stub(:info)
   end
 
   shared_examples_for 'clear failed paths' do
