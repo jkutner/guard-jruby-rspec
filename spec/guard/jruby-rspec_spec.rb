@@ -131,6 +131,15 @@ describe Guard::JRubyRSpec do
       subject.reload_paths([test_file])
     end
 
+    it 'recovers from exceptions raised when loading files' do
+      lib_file = 'lib/myapp/greeter.rb'
+      File.stub(:exists?).and_return(true)
+      subject.stub(:load).and_raise("This fires and deactivates the jruby-rspec guard")
+      Guard::UI.should_receive(:error).any_number_of_times
+      expect {
+        subject.reload_paths([lib_file])
+      }.to throw_symbol(:task_has_failed)
+    end
   end
 
   describe '#run_on_change' do

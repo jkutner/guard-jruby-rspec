@@ -85,7 +85,13 @@ module Guard
             # end
           else
             # reload the file
-            load p 
+            begin
+              load p
+            rescue
+              UI.error $!.message
+              UI.error $!.backtrace.join "\n"
+              throw :task_has_failed
+            end
           end
         end
       end
