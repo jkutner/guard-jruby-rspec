@@ -85,18 +85,13 @@ module Guard
             # end
           else
             # reload the file
-            begin
+            Containment.new.protect do
               load p
-            rescue
-              UI.error $!.message
-              UI.error $!.backtrace.join "\n"
-              throw :task_has_failed
             end
           end
         end
       end
     end
-
   end
 end
 
