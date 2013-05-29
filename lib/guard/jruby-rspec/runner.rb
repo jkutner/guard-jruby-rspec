@@ -1,4 +1,5 @@
 require 'rspec'
+require 'guard/jruby-rspec/containment'
 require 'guard/jruby-rspec/formatters/notification_rspec'
 
 module Guard
@@ -44,13 +45,10 @@ module Guard
           # end
         else
           orig_configuration = ::RSpec.configuration
-          begin
+          Containment.new.protect do
             ::RSpec::Core::Runner.run(rspec_arguments(paths, @options))
-          rescue SyntaxError => e
-            UI.error e.message
-          ensure
-            ::RSpec.instance_variable_set(:@configuration, orig_configuration)
           end
+          ::RSpec.instance_variable_set(:@configuration, orig_configuration)
         end
       end
 
