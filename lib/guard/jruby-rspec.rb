@@ -51,6 +51,7 @@ module Guard
     end
 
     def run_on_changes(raw_paths)
+      unload_previous_examples
       reload_paths(raw_paths)
 
       unless @custom_watchers.nil? or @custom_watchers.empty?
@@ -91,6 +92,13 @@ module Guard
           end
         end
       end
+    end
+
+    private
+
+    def unload_previous_examples
+      ::RSpec.configuration.reset
+      ::RSpec.world.reset
     end
   end
 end
