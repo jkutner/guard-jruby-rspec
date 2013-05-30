@@ -52,7 +52,13 @@ module Guard
       run_all if @options[:all_on_start]
     end
 
+    def run_all
+      unload_previous_examples
+      super
+    end
+
     def run_on_changes(raw_paths)
+      unload_previous_examples
       @reloaders.reload(raw_paths)
 
       unless @custom_watchers.nil? or @custom_watchers.empty?
@@ -112,6 +118,11 @@ module Guard
       reloader_procs.each { |reloader| reloaders.register &reloader }
 
       reloaders
+    end
+
+    def unload_previous_examples
+      ::RSpec.configuration.reset
+      ::RSpec.world.reset
     end
   end
 end

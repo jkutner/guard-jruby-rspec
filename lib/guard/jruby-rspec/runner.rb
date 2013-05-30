@@ -44,7 +44,6 @@ module Guard
           #   $stderr.reopen(orig_stderr)
           # end
         else
-          unload_previous_examples
           orig_configuration = ::RSpec.configuration
           Containment.new.protect do
             ::RSpec::Core::Runner.run(rspec_arguments(paths, @options))
@@ -81,11 +80,6 @@ module Guard
 
       def formatter_regex
         @formatter_regex ||= /(?:^|\s)(?:-f\s*|--format(?:=|\s+))([\w:]+)/
-      end
-
-      def unload_previous_examples
-        ::RSpec.configuration.reset
-        ::RSpec.world.reset
       end
     end
   end
