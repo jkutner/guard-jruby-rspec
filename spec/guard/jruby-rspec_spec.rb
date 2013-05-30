@@ -10,7 +10,8 @@ describe Guard::JRubyRSpec do
       :spec_paths => ['spec'],
       :spec_file_suffix => "_spec.rb",
       :run_all => {},
-      :monitor_file=> ".guard-jruby-rspec"
+      :monitor_file => ".guard-jruby-rspec",
+      :custom_reloaders => []
     }
   end
 
@@ -108,8 +109,16 @@ describe Guard::JRubyRSpec do
     it_should_behave_like 'clear failed paths'
   end
 
-  describe '#reload_paths' do
+  describe '#reload_rails' do
+    it 'continues silently if the supported Rails 3.2+ version of Rails reloading is not supported' do
+      defined?(::ActionDispatch::Reloader).should be_false
+      expect {
+        subject.reload_rails
+      }.not_to raise_exception
+    end
+  end
 
+  describe '#reload_paths' do
     it 'should reload files other than spec files' do
       lib_file = 'lib/myapp/greeter.rb'
       spec_file = 'specs/myapp/greeter_spec.rb'
