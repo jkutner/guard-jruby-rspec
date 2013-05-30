@@ -1,6 +1,7 @@
 require 'guard'
 require 'guard/guard'
 require 'guard/rspec'
+require 'guard/jruby-rspec/reloaders'
 
 module Guard
   class JRubyRSpec < ::Guard::RSpec
@@ -15,7 +16,8 @@ module Guard
         :spec_paths       => ["spec"],        
         :spec_file_suffix => "_spec.rb",
         :run_all          => {},
-        :monitor_file     => ".guard-jruby-rspec"
+        :monitor_file     => ".guard-jruby-rspec",
+        :custom_reloaders => []
       }.merge(options)
       @last_failed  = false
       @failed_paths = []
@@ -41,7 +43,7 @@ module Guard
 
       @inspector = Inspector.new(@options)
       @runner = Runner.new(@options)
-
+      @reloaders = set_up_reloaders(@options)
     end
 
     # Call once when guard starts
@@ -51,7 +53,7 @@ module Guard
     end
 
     def run_on_changes(raw_paths)
-      reload_paths(raw_paths)
+      @reloaders.reload(raw_paths)
 
       unless @custom_watchers.nil? or @custom_watchers.empty?
         paths = []
@@ -69,6 +71,13 @@ module Guard
     # Guard 1.1 renamed run_on_change to run_on_changes
     alias_method :run_on_change, :run_on_changes
 
+    def reload_rails(*)
+      if defined? ::ActionDispatch::Reloader
+        ActionDispatch::Reloader.cleanup!
+        ActionDispatch::Reloader.prepare!
+      end
+    end
+
     def reload_paths(paths)
       paths.reject {|p| p.end_with?(@options[:spec_file_suffix])}.each do |p| 
         if File.exists?(p) 
@@ -85,18 +94,25 @@ module Guard
             # end
           else
             # reload the file
-            begin
+            Containment.new.protect do
               load p
-            rescue
-              UI.error $!.message
-              UI.error $!.backtrace.join "\n"
-              throw :task_has_failed
             end
           end
         end
       end
     end
 
+    private
+
+    def set_up_reloaders(options)
+      reloaders = Reloaders.new
+      reloader_methods = [:reload_rails, :reload_paths]
+      reloader_procs = reloader_methods.map { |name| method(name) }
+      reloader_procs += options[:custom_reloaders]
+      reloader_procs.each { |reloader| reloaders.register &reloader }
+
+      reloaders
+    end
   end
 end
 

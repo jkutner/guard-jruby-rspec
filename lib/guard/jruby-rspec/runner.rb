@@ -1,4 +1,5 @@
 require 'rspec'
+require 'guard/jruby-rspec/containment'
 require 'guard/jruby-rspec/formatters/notification_rspec'
 
 module Guard
@@ -43,14 +44,12 @@ module Guard
           #   $stderr.reopen(orig_stderr)
           # end
         else
+          unload_previous_examples
           orig_configuration = ::RSpec.configuration
-          begin
+          Containment.new.protect do
             ::RSpec::Core::Runner.run(rspec_arguments(paths, @options))
-          rescue SyntaxError => e
-            UI.error e.message
-          ensure
-            ::RSpec.instance_variable_set(:@configuration, orig_configuration)
           end
+          ::RSpec.instance_variable_set(:@configuration, orig_configuration)
         end
       end
 
@@ -84,6 +83,10 @@ module Guard
         @formatter_regex ||= /(?:^|\s)(?:-f\s*|--format(?:=|\s+))([\w:]+)/
       end
 
+      def unload_previous_examples
+        ::RSpec.configuration.reset
+        ::RSpec.world.reset
+      end
     end
   end
 end

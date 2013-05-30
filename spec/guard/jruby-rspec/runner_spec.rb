@@ -28,8 +28,10 @@ describe Guard::JRubyRSpec::Runner do
     context 'when one of the source files is bad' do
       it 'recovers from syntax errors in files by displaying the error' do
         RSpec::Core::Runner.stub(:run).and_raise(SyntaxError.new('Bad Karma'))
-        Guard::JRubyRSpec::Runner::UI.should_receive(:error).with('Bad Karma')
-        subject.run(['spec/foo'])
+        Guard::UI.should_receive(:error).at_least(1).times
+        expect {
+          subject.run(['spec/foo'])
+        }.to throw_symbol(:task_has_failed)
       end
     end
   end
