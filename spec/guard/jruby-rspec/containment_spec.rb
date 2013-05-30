@@ -16,7 +16,7 @@ class Guard::JRubyRSpec
       end
 
       context 'with a custom error_handler' do
-        subject(:containment) { described_class.new(:error_handler => lambda { @custom_handler_called = true }) }
+        subject(:containment) { described_class.new(:error_handler => lambda { |error| @custom_handler_called = true }) }
 
         it 'calls the custom error_handler' do
           Guard::UI.should_receive(:error).never
