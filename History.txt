@@ -1,0 +1,4 @@
+== 0.2.0
+
+-  Use Rails 3.2+ class reloading when available 
+-  Refactoring of loading into Containment to better handle errors
