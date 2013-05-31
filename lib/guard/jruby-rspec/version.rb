@@ -1,5 +1,5 @@
 module Guard
   module JRubyRSpecVersion
-    VERSION = "0.2.0"
+    VERSION = "0.2.1.dev"
   end
 end
