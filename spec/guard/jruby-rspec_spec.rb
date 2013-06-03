@@ -223,6 +223,18 @@ describe Guard::JRubyRSpec do
       expect { subject.run_on_change(['spec/foo']) }.to throw_symbol :task_has_failed
     end
 
+    it "works with watchers that have an array of test targets" do
+      subject = described_class.new([Guard::Watcher.new(%r{^spec/(.+)$}, lambda { |m| ["spec/#{m[1]}_match", "spec/#{m[1]}_another.rb"]})])
+
+      test_targets = ["spec/quack_spec_match", "spec/quack_spec_another.rb"]
+
+      inspector.should_receive(:clean).with(test_targets).and_return(test_targets)
+      runner.should_receive(:run).with(test_targets) { true }
+      subject.run_on_change(['spec/quack_spec'])
+
+    end
+
+
     it "works with watchers that don't have an action" do
       subject = described_class.new([Guard::Watcher.new(%r{^spec/(.+)$})])
 

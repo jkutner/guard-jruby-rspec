@@ -71,7 +71,7 @@ module Guard
             end
           end
         end
-        super(paths)
+        super(paths.flatten)
       end
     end
     # Guard 1.1 renamed run_on_change to run_on_changes
