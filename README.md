@@ -2,7 +2,7 @@
 
 This guard extention allows you to run all of your specs on JRuby without the initial start up cost.  It loads all of your application files in advance, and reloads any that change.  That way, when you run RSpec, the JVM is already running, and your files have already been required.
 
-Most of the config options available to `guard-rspec` work with this extension too.  
+Most of the config options available to `guard-rspec` work with this extension too.
 
 ## How to Use On-Demand mode
 
@@ -25,16 +25,16 @@ Then run `guard` like this (probably with Bundler):
     7 examples, 0 failures
     >
 
-The first time guard starts up, it will run all of your specs in order to bootstrap the runtime.  This first run will be as slow as any other run on JRuby. 
+The first time guard starts up, it will run all of your specs in order to bootstrap the runtime.  This first run will be as slow as any other run on JRuby.
 
-Once you change some files, and press return at the guard prompt to rerun your specs. You'll notice it's a lot faster than running `rspec` from the command line. 
+Once you change some files, and press return at the guard prompt to rerun your specs. You'll notice it's a lot faster than running `rspec` from the command line.
 
 ## How to Use Autorun mode
 
 Add something like this to your guard file (alternatives are in the template file):
 
     interactor :simple
-    guard 'jruby-rspec' do        
+    guard 'jruby-rspec' do
       watch(%r{^spec/.+_spec\.rb$})
       watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
       watch('spec/spec_helper.rb')  { "spec" }
