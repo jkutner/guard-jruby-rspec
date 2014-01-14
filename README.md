@@ -54,7 +54,7 @@ When using this gem on a non Rails 3.2+ project, you may want to unload these cl
 Pass in custom reloaders as an option:
 
     unload_my_class     = lambda { |changed_paths| Object.send :remove_const, 'MyClass' }
-    reload_factory_girl = lambda { |changed_paths| FactoryGirl.reload }
+    reload_factory_girl = lambda { |changed_paths| FactoryGirl.reload } # Already included by default when FactoryGirl is loaded
     guard 'jruby-rspec', :custom_reloaders => [unload_my_class, reload_factory_girl] do
       ...
     end

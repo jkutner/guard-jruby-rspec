@@ -116,6 +116,28 @@ describe Guard::JRubyRSpec do
         subject.reload_rails
       }.not_to raise_exception
     end
+
+    it "reloads Rails if it's loaded" do
+      stub_const '::ActionDispatch::Reloader', double
+			ActionDispatch::Reloader.should_receive 'cleanup!'
+			ActionDispatch::Reloader.should_receive 'prepare!'
+			subject.reload_rails
+    end
+  end
+
+  describe '#reload_factory_girl' do
+    it 'continues silently if FactoryGirl is not loaded' do
+      defined?(::FactoryGirl).should be_false
+      expect {
+        subject.reload_factory_girl
+      }.not_to raise_exception
+    end
+
+    it "reloads FactoryGirl if it's loaded" do
+      stub_const 'FactoryGirl', double
+			FactoryGirl.should_receive 'reload'
+			subject.reload_factory_girl
+    end
   end
 
   describe '#reload_paths' do

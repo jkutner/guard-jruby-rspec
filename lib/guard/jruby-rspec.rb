@@ -84,6 +84,10 @@ module Guard
       end
     end
 
+    def reload_factory_girl(*)
+      FactoryGirl.reload if defined? ::FactoryGirl
+    end
+
     def reload_paths(paths)
       paths.reject {|p| p.end_with?(@options[:spec_file_suffix])}.each do |p|
         if File.exists?(p)
@@ -112,7 +116,7 @@ module Guard
 
     def set_up_reloaders(options)
       reloaders = Reloaders.new
-      reloader_methods = [:reload_rails, :reload_paths]
+      reloader_methods = [:reload_rails, :reload_paths, :reload_factory_girl]
       reloader_procs = reloader_methods.map { |name| method(name) }
       reloader_procs += options[:custom_reloaders]
       reloader_procs.each { |reloader| reloaders.register &reloader }
