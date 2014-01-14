@@ -42,6 +42,23 @@ Add something like this to your guard file (alternatives are in the template fil
 
 Proceed as in on-demand mode.
 
+## Code Reloading
+
+Since JRuby cannot fork, guard-jruby-rspec reloads code with `load` on each changed path, which can potentially cause weird side side effects or errors.
+
+Rails 3.2+ projects also use the Rails reloader to unload classes on each run.
+
+Loading classes more than once does not work if the class definition is not idempotent.
+When using this gem on a non Rails 3.2+ project, you may want to unload these classes manually if you get new errors on the 2nd run:
+
+Pass in custom reloaders as an option:
+
+    unload_my_class     = lambda { |changed_paths| Object.send :remove_const, 'MyClass' }
+    reload_factory_girl = lambda { |changed_paths| FactoryGirl.reload }
+    guard 'jruby-rspec', :custom_reloaders => [unload_my_class, reload_factory_girl] do
+      ...
+    end
+
 ## Using CLI Options
 
 The format that `guard-jruby-rspec` expects CLI options to be in is a little different than what `guard-rspec` exepcts.  Here is an example:
