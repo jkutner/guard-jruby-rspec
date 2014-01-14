@@ -13,7 +13,7 @@ module Guard
         :all_after_pass   => true,
         :all_on_start     => true,
         :keep_failed      => true,
-        :spec_paths       => ["spec"],        
+        :spec_paths       => ["spec"],
         :spec_file_suffix => "_spec.rb",
         :run_all          => {},
         :monitor_file     => ".guard-jruby-rspec",
@@ -84,9 +84,13 @@ module Guard
       end
     end
 
+    def reload_factory_girl(*)
+      FactoryGirl.reload if defined? ::FactoryGirl
+    end
+
     def reload_paths(paths)
-      paths.reject {|p| p.end_with?(@options[:spec_file_suffix])}.each do |p| 
-        if File.exists?(p) 
+      paths.reject {|p| p.end_with?(@options[:spec_file_suffix])}.each do |p|
+        if File.exists?(p)
           if p == @options[:monitor_file]
             # begin
             #   pidfile = open(@options[:monitor_file], "r+")
@@ -112,7 +116,7 @@ module Guard
 
     def set_up_reloaders(options)
       reloaders = Reloaders.new
-      reloader_methods = [:reload_rails, :reload_paths]
+      reloader_methods = [:reload_rails, :reload_paths, :reload_factory_girl]
       reloader_procs = reloader_methods.map { |name| method(name) }
       reloader_procs += options[:custom_reloaders]
       reloader_procs.each { |reloader| reloaders.register &reloader }

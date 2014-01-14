@@ -2,7 +2,7 @@
 
 This guard extention allows you to run all of your specs on JRuby without the initial start up cost.  It loads all of your application files in advance, and reloads any that change.  That way, when you run RSpec, the JVM is already running, and your files have already been required.
 
-Most of the config options available to `guard-rspec` work with this extension too.  
+Most of the config options available to `guard-rspec` work with this extension too.
 
 ## How to Use On-Demand mode
 
@@ -25,22 +25,39 @@ Then run `guard` like this (probably with Bundler):
     7 examples, 0 failures
     >
 
-The first time guard starts up, it will run all of your specs in order to bootstrap the runtime.  This first run will be as slow as any other run on JRuby. 
+The first time guard starts up, it will run all of your specs in order to bootstrap the runtime.  This first run will be as slow as any other run on JRuby.
 
-Once you change some files, and press return at the guard prompt to rerun your specs. You'll notice it's a lot faster than running `rspec` from the command line. 
+Once you change some files, and press return at the guard prompt to rerun your specs. You'll notice it's a lot faster than running `rspec` from the command line.
 
 ## How to Use Autorun mode
 
 Add something like this to your guard file (alternatives are in the template file):
 
     interactor :simple
-    guard 'jruby-rspec' do        
+    guard 'jruby-rspec' do
       watch(%r{^spec/.+_spec\.rb$})
       watch(%r{^lib/(.+)\.rb$})     { |m| "spec/lib/#{m[1]}_spec.rb" }
       watch('spec/spec_helper.rb')  { "spec" }
     end
 
 Proceed as in on-demand mode.
+
+## Code Reloading
+
+Since JRuby cannot fork, guard-jruby-rspec reloads code with `load` on each changed path, which can potentially cause weird side side effects or errors.
+
+Rails 3.2+ projects also use the Rails reloader to unload classes on each run.
+
+Loading classes more than once does not work if the class definition is not idempotent.
+When using this gem on a non Rails 3.2+ project, you may want to unload these classes manually if you get new errors on the 2nd run:
+
+Pass in custom reloaders as an option:
+
+    unload_my_class     = lambda { |changed_paths| Object.send :remove_const, 'MyClass' }
+    reload_factory_girl = lambda { |changed_paths| FactoryGirl.reload } # Already included by default when FactoryGirl is loaded
+    guard 'jruby-rspec', :custom_reloaders => [unload_my_class, reload_factory_girl] do
+      ...
+    end
 
 ## Using CLI Options
 
