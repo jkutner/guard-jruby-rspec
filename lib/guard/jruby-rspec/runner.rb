@@ -71,7 +71,6 @@ module Guard
         arg_parts.concat(options[:cli]) if options[:cli]
         if @options[:notification]
           arg_parts << parsed_or_default_formatter unless options[:cli] =~ formatter_regex
-          arg_parts << "-fGuard::JRubyRSpec::Formatter::NotificationRSpec"
           arg_parts << "-o/dev/null"
         end
         #arg_parts << "--failure-exit-code #{FAILURE_EXIT_CODE}" if failure_exit_code_supported?
