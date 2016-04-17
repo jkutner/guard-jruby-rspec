@@ -119,8 +119,8 @@ module Guard
 
     def set_up_reloaders(custom_reloaders, reloader_methods=[])
       reloaders = Reloaders.new
-      reloader_procs = reloader_methods.map { |name| method(name) }
-      reloader_procs += custom_reloaders
+      reloader_procs = custom_reloaders
+      reloader_procs += reloader_methods.map { |name| method(name) }
       reloader_procs.each { |reloader| reloaders.register &reloader }
 
       reloaders
