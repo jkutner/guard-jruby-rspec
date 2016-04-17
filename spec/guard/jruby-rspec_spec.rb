@@ -11,7 +11,8 @@ describe Guard::JRubyRSpec do
       :spec_file_suffix => "_spec.rb",
       :run_all => {},
       :monitor_file => ".guard-jruby-rspec",
-      :custom_reloaders => []
+      :custom_reloaders => [],
+      :custom_reloaders_for_run_all=>[]
     }
   end
 
