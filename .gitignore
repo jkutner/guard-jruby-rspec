@@ -1,5 +1,3 @@
 *.gem
 .guard-jruby-spec
 Gemfile.lock
-.idea/
-vendor/
