@@ -17,7 +17,8 @@ module Guard
         :spec_file_suffix => "_spec.rb",
         :run_all          => {},
         :monitor_file     => ".guard-jruby-rspec",
-        :custom_reloaders => []
+        :custom_reloaders => [],
+        :custom_reloaders_for_run_all => []
       }.merge(options)
       @last_failed  = false
       @failed_paths = []
@@ -43,7 +44,8 @@ module Guard
 
       @inspector = Inspector.new(@options)
       @runner = Runner.new(@options)
-      @reloaders = set_up_reloaders(@options)
+      @reloaders = set_up_reloaders(@options[:custom_reloaders], [:reload_rails, :reload_paths, :reload_factory_girl])
+      @runall_reloaders = set_up_reloaders(@options[:custom_reloaders_for_run_all])
     end
 
     # Call once when guard starts
@@ -54,6 +56,7 @@ module Guard
 
     def run_all
       unload_previous_examples
+      @runall_reloaders.reload
       super
     end
 
@@ -114,11 +117,10 @@ module Guard
 
     private
 
-    def set_up_reloaders(options)
+    def set_up_reloaders(custom_reloaders, reloader_methods=[])
       reloaders = Reloaders.new
-      reloader_methods = [:reload_rails, :reload_paths, :reload_factory_girl]
-      reloader_procs = reloader_methods.map { |name| method(name) }
-      reloader_procs += options[:custom_reloaders]
+      reloader_procs = custom_reloaders
+      reloader_procs += reloader_methods.map { |name| method(name) }
       reloader_procs.each { |reloader| reloaders.register &reloader }
 
       reloaders
